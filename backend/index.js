@@ -2,7 +2,7 @@ const app = require("express");
 const http=require('http').Server(app);
 
 const mongoose=require('mongoose');
-
+const Users = require('./models/User');
 mongoose.connect("mongodb://localhost:27017/shoplify")
 
 const User=require('./models/userModel')
