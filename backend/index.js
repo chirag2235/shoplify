@@ -1,7 +1,7 @@
 const express = require("express");
 const app = express();
 const http = require('http').Server(app);
-
+const bodyParser = require("body-parser");
 const mongoose = require('mongoose');
 mongoose.connect("mongodb://127.0.0.1:27017/shoplify")
   .then(() => {
@@ -11,26 +11,20 @@ mongoose.connect("mongodb://127.0.0.1:27017/shoplify")
     console.error("Error connecting to MongoDB:", error);
   });
 
-// const User = require('./models/userModel');
-
-// async function insert() {
-//     await User.create({
-//         name: 'Chirag',
-//         email: 'chiragmahajan26.cm@gmail.com'
-//     });
-// }
-// insert();
-
 app.use(express.json());
-
+app.use(bodyParser.urlencoded({ extended: true }));
 
 //Middleware for error
-const errorMiddleware=require("./middleware/error");
-app.use(errorMiddleware);
+const errorMiddleware = require("./middleware/error");
+
 
 //Routes
 const products = require('./routes/productRoute');
+const user= require('./routes/userRoute');
 app.use('/api/v1', products);
+app.use('/api/v1',user);
+
+app.use(errorMiddleware);
 
 
 const PORT =3000;
