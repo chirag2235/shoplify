@@ -95,7 +95,9 @@ exports.forgotPassword = catchAsyncError(async(req,res,next)=>{
 
 
 exports.resetPassword = catchAsyncError(async(req,res,next)=>{
-    const resetPasswordToken = crypto.createHash("sha256").update(req.params.token).digest("hex");
+    const resetPasswordToken = crypto.createHash("sha256").update(req.params.token).digest("hex"); 
+
+    // crypto value jo generate kri thi usse check kr rhe hai kya kisi user ne generate kia usse abhi
 
     const user = await User.findOne({
         resetPasswordToken,
@@ -116,4 +118,21 @@ exports.resetPassword = catchAsyncError(async(req,res,next)=>{
     await user.save();
 
     sendToken(user,200,res);
-})
+});
+
+exports.getUserDetails = catchAsyncError(async(req,res,next)=>{
+    const user = await User.findById(req.user.id);
+    res.status(200).json({
+        success:true,
+        user,
+    })
+});
+
+//change user password
+exports.getUserPassword = catchAsyncError(async(req,res,next)=>{
+    const user = await User.findById(req.user.id).select("+password");
+    res.status(200).json({
+        success:true,
+        user,
+    })
+});
