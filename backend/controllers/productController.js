@@ -1,9 +1,9 @@
 const Product = require("../models/productModel");
 const ErrorHandler = require("../utils/errorhandler");
 const ApiFeatures=require("../utils/apifeatures");
-const catchAsyncErrors=require("../middleware/catchAsyncError");
+const catchAsyncError = require("../middleware/catchAsyncError");
 
-exports.createProduct= catchAsyncErrors(async(req,res,next)=>{
+exports.createProduct= catchAsyncError(async(req,res,next)=>{
 
     req.body.user = req.user.id;
     const product = await Product.create(req.body);
@@ -14,7 +14,7 @@ exports.createProduct= catchAsyncErrors(async(req,res,next)=>{
 });
 
 
-exports.getAllProducts = catchAsyncErrors(async (req,res)=>{
+exports.getAllProducts = catchAsyncError(async (req,res)=>{
     const resultPerPage=5;
     const productCount=await Product.countDocuments();
     const api= new ApiFeatures(Product.find(),req.query).search().filter().pagination(resultPerPage);
@@ -26,7 +26,7 @@ exports.getAllProducts = catchAsyncErrors(async (req,res)=>{
     })
 })
 
-exports.updateProduct=catchAsyncErrors(async (req,res,next)=>{
+exports.updateProduct=catchAsyncError(async (req,res,next)=>{
     let product =await Product.findById(req.params.id);
     if(!product){
         // return res.status(500).json({
@@ -47,7 +47,7 @@ exports.updateProduct=catchAsyncErrors(async (req,res,next)=>{
     })
 })
 
-exports.deleteProduct = catchAsyncErrors(async(req,res,next)=>{
+exports.deleteProduct = catchAsyncError(async(req,res,next)=>{
     const product = await Product.findById(req.params.id);
     if(!product){
         return next(new ErrorHandler("Product not found", 404));
@@ -60,7 +60,7 @@ exports.deleteProduct = catchAsyncErrors(async(req,res,next)=>{
     })
 })
 
-exports.getProductDetails=catchAsyncErrors(async(req,res,next)=>{
+exports.getProductDetails=catchAsyncError(async(req,res,next)=>{
     const product = await Product.findById(req.params.id);
     if(!product){
         return next(new ErrorHandler("Product not found", 404));
@@ -68,5 +68,46 @@ exports.getProductDetails=catchAsyncErrors(async(req,res,next)=>{
     res.status(200).json({
         success:true,
         product
-    })
-})
+    });
+});
+
+exports.createProductReview = catchAsyncError(async (req, res, next) => {
+    const { rating, comment, productId } = req.body;
+
+    const review = {
+        user: req.user._id,
+        name: req.user.name,
+        rating: Number(rating),
+        comment,
+    };
+
+    const product = await Product.findById(productId);
+
+    const isReviewed = product.reviews.find(
+        (rev) => rev.user.toString() === req.user._id.toString()
+    );
+
+    if (isReviewed) {
+        product.reviews.forEach((rev) => {
+        if (rev.user.toString() === req.user._id.toString())
+            (rev.rating = rating), (rev.comment = comment);
+        });
+    } else {
+        product.reviews.push(review);
+        product.numOfReviews = product.reviews.length;
+    }
+
+    let avg = 0;
+
+    product.reviews.forEach((rev) => {
+        avg += rev.rating;
+    });
+
+    product.ratings = avg / product.reviews.length;
+
+    await product.save({ validateBeforeSave: false });
+
+    res.status(200).json({
+        success: true,
+    });
+});
