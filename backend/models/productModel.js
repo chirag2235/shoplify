@@ -27,6 +27,12 @@ const productSchema=new mongoose.Schema({
             required:true 
         }
     }],
+
+    user:{
+        type:mongoose.Schema.ObjectId,
+        ref:"User",
+        required:true,
+    },
     category:{
         type:String,
         required:[true,"Please Enter Product Category"]

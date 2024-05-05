@@ -2,7 +2,13 @@ const express = require("express");
 const app = express();
 const http = require('http').Server(app);
 const bodyParser = require("body-parser");
+const cookieParser= require('cookie-parser');
 const mongoose = require('mongoose');
+
+if (process.env.NODE_ENV !== 'production') {
+  require('dotenv').config();
+}
+
 mongoose.connect("mongodb://127.0.0.1:27017/shoplify")
   .then(() => {
     console.log("MongoDB connected successfully");
@@ -12,6 +18,8 @@ mongoose.connect("mongodb://127.0.0.1:27017/shoplify")
   });
 
 app.use(express.json());
+app.use(cookieParser());
+
 app.use(bodyParser.urlencoded({ extended: true }));
 
 //Middleware for error
