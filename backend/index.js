@@ -9,7 +9,7 @@ if (process.env.NODE_ENV !== 'production') {
   require('dotenv').config();
 }
 
-mongoose.connect("mongodb://127.0.0.1:27017/shoplify")
+mongoose.connect("mongodb+srv://chiragmahajan26cm:harrypotter@cluster0.x3clw9x.mongodb.net/")
   .then(() => {
     console.log("MongoDB connected successfully");
   })
@@ -35,7 +35,7 @@ app.use('/api/v1',user);
 app.use(errorMiddleware);
 
 
-const PORT =3000;
+const PORT =4000;
 http.listen(PORT, function(){
     console.log('Server is running');
 });
