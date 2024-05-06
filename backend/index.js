@@ -9,7 +9,7 @@ if (process.env.NODE_ENV !== 'production') {
   require('dotenv').config();
 }
 
-mongoose.connect("mongodb+srv://chiragmahajan26cm:harrypotter@cluster0.x3clw9x.mongodb.net/")
+mongoose.connect(process.env.MONGO_URL)
   .then(() => {
     console.log("MongoDB connected successfully");
   })

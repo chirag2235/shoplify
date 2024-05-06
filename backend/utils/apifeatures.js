@@ -18,7 +18,7 @@ class ApiFeatures{
         const queryCopy={...this.queryStr}; // by value 
 
         //remove some field for category 
-        const removeField=["keyword","page","limit"];
+        const removeField=["keyword","page","limit"]; //don't filter on the base of these as we have done their work
         // console.log(queryCopy);
         removeField.forEach(key => delete queryCopy[key]);
 
@@ -28,7 +28,9 @@ class ApiFeatures{
         //filter for price
 
         let queryStr=JSON.stringify(queryCopy);
+        console.log("queryStr", queryStr);
         queryStr = queryStr.replace(/\b(gt|gte|lt|lte)\b/g, (key) => `$${key}`)
+        console.log("querystr after filter", queryStr);
 
         this.query=this.query.find(JSON.parse(queryStr));
 
