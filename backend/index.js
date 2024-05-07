@@ -9,7 +9,7 @@ if (process.env.NODE_ENV !== 'production') {
   require('dotenv').config();
 }
 
-mongoose.connect("mongodb+srv://chiragmahajan26cm:harrypotter@cluster0.x3clw9x.mongodb.net/")
+mongoose.connect(process.env.MONGO_URL)
   .then(() => {
     console.log("MongoDB connected successfully");
   })
@@ -29,8 +29,10 @@ const errorMiddleware = require("./middleware/error");
 //Routes
 const products = require('./routes/productRoute');
 const user= require('./routes/userRoute');
+const order=require('./routes/orderRoute');
 app.use('/api/v1', products);
 app.use('/api/v1',user);
+app.use('/api/v1',order);
 
 app.use(errorMiddleware);
 
